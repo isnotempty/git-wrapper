@@ -168,7 +168,7 @@ final class GitCommand
     /**
      * Renders the arguments and options for the Git command.
      *
-     * @return string|mixed[]
+     * @return string|string[]
      */
     public function getCommandLine()
     {
@@ -176,10 +176,15 @@ final class GitCommand
             return $this->getCommand();
         }
 
-        $command = array_merge([$this->getCommand()], $this->buildOptions(), $this->args);
+        $command = [$this->getCommand()];
 
-        return array_filter($command, function ($value): bool {
-            return strlen($value) > 0;
-        });
+        foreach (array_merge($this->buildOptions(), $this->args) as $part) {
+            $value = (string) $part;
+            if (strlen($value) > 0) {
+                $command[] = $value;
+            }
+        }
+
+        return $command;
     }
 }
